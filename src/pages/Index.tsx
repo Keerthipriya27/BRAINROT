@@ -60,11 +60,11 @@ const Index = () => {
           <Bot className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-lg font-semibold tracking-tight text-foreground">
-            Assistant
+          <h1 className="text-lg font-bold tracking-widest uppercase text-foreground font-mono">
+            BRAINROT
           </h1>
           <p className="text-xs text-muted-foreground">
-            Your helpful AI companion
+            ur unhinged AI bestie 🧠💀
           </p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
