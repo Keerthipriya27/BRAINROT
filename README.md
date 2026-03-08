@@ -2,6 +2,10 @@
 
 ur unhinged AI bestie — a chaotic, Gen-Z-flavored AI chat assistant built with React and streaming AI responses.
 
+![BRAINROT Screenshot](public/screenshot.png)
+
+> *Replace `public/screenshot.png` with your own screenshot or GIF of the app.*
+
 ## Features
 
 - 🔥 Real-time streaming AI responses
