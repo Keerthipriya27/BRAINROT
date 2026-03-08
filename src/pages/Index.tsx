@@ -2,14 +2,14 @@ import { useState, useRef, useEffect, useCallback } from "react";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
 import { streamChat, type ChatMessage as Msg } from "@/lib/streamChat";
-import { Shield, Zap, Bug, Lock, FileCode } from "lucide-react";
+import { Bot, Lightbulb, PenLine, HelpCircle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 const SUGGESTIONS = [
-  { icon: Bug, label: "Analyze a vulnerability", prompt: "What are the most critical web application vulnerabilities in 2025 and how do I defend against them?" },
-  { icon: FileCode, label: "Audit my code", prompt: "Review this code for security issues:\n\n```js\napp.get('/user', (req, res) => {\n  const id = req.query.id;\n  db.query(`SELECT * FROM users WHERE id = ${id}`);\n});\n```" },
-  { icon: Lock, label: "Harden a server", prompt: "Give me a comprehensive Linux server hardening checklist for a production web server." },
-  { icon: Zap, label: "Incident response", prompt: "We detected unauthorized access to our database. Walk me through an incident response plan." },
+  { icon: Lightbulb, label: "Brainstorm ideas", prompt: "Help me brainstorm creative ideas for a weekend project." },
+  { icon: PenLine, label: "Help me write", prompt: "Help me write a professional email to follow up on a job interview." },
+  { icon: HelpCircle, label: "Explain a concept", prompt: "Explain how the internet works in simple terms." },
+  { icon: Sparkles, label: "Get creative", prompt: "Write a short, fun poem about coffee on a rainy morning." },
 ];
 
 const Index = () => {
@@ -56,20 +56,20 @@ const Index = () => {
     <div className="flex h-screen flex-col bg-background">
       {/* Header */}
       <header className="flex items-center gap-3 border-b border-border px-6 py-4">
-        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-          <Shield className="h-5 w-5 text-primary" />
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
+          <Bot className="h-5 w-5 text-primary" />
         </div>
         <div>
-          <h1 className="text-lg font-semibold tracking-tight text-foreground font-sans">
-            SENTINEL
+          <h1 className="text-lg font-semibold tracking-tight text-foreground">
+            Assistant
           </h1>
-          <p className="text-xs text-muted-foreground font-mono">
-            Cybersecurity AI Agent
+          <p className="text-xs text-muted-foreground">
+            Your helpful AI companion
           </p>
         </div>
         <div className="ml-auto flex items-center gap-1.5">
           <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-          <span className="text-xs text-muted-foreground font-mono">Online</span>
+          <span className="text-xs text-muted-foreground">Online</span>
         </div>
       </header>
 
@@ -77,14 +77,14 @@ const Index = () => {
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
         {messages.length === 0 ? (
           <div className="flex h-full flex-col items-center justify-center">
-            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20">
-              <Shield className="h-8 w-8 text-primary" />
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
+              <Bot className="h-8 w-8 text-primary" />
             </div>
             <h2 className="mb-2 text-xl font-semibold text-foreground">
-              How can I secure your systems?
+              What can I help you with?
             </h2>
             <p className="mb-8 max-w-md text-center text-sm text-muted-foreground">
-              I can analyze vulnerabilities, audit code, guide incident response, and recommend security hardening strategies.
+              Ask me anything — I can help with writing, research, brainstorming, explanations, and more.
             </p>
             <div className="grid w-full max-w-lg grid-cols-2 gap-3">
               {SUGGESTIONS.map((s) => (
@@ -116,8 +116,8 @@ const Index = () => {
       <div className="border-t border-border px-6 py-4">
         <div className="mx-auto max-w-3xl">
           <ChatInput onSend={send} disabled={isLoading} />
-          <p className="mt-2 text-center text-xs text-muted-foreground font-mono">
-            SENTINEL provides guidance only. Always verify recommendations with your security team.
+          <p className="mt-2 text-center text-xs text-muted-foreground">
+            AI can make mistakes. Please verify important information.
           </p>
         </div>
       </div>
