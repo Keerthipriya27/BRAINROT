@@ -1,6 +1,6 @@
 # BRAINROT 🧠💀
 
-ur unhinged AI bestie — a chaotic, Gen-Z-flavored AI chat assistant built with React and streaming AI responses.
+Your unhinged AI bestie — a chaotic, Gen-Z-flavored AI chat assistant built with React and streaming AI responses.
 
 ## Features
 
