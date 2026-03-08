@@ -117,7 +117,7 @@ const Index = () => {
         <div className="mx-auto max-w-3xl">
           <ChatInput onSend={send} disabled={isLoading} />
           <p className="mt-2 text-center text-xs text-muted-foreground">
-            AI can make mistakes. Please verify important information.
+            BRAINROT can be unhinged. don't take everything literally fr fr 💀
           </p>
         </div>
       </div>
