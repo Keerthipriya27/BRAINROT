@@ -1,120 +1,124 @@
-import { useState, useCallback } from "react";
-import { ImageDropzone } from "@/components/ImageDropzone";
-import { AnalysisResult } from "@/components/AnalysisResult";
-import { Eye, X } from "lucide-react";
+import { useState, useRef, useEffect, useCallback } from "react";
+import { ChatMessage } from "@/components/ChatMessage";
+import { ChatInput } from "@/components/ChatInput";
+import { streamChat, type ChatMessage as Msg } from "@/lib/streamChat";
+import { Shield, Zap, Bug, Lock, FileCode } from "lucide-react";
 import { toast } from "sonner";
 
-const ANALYZE_URL = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/analyze-image`;
+const SUGGESTIONS = [
+  { icon: Bug, label: "Analyze a vulnerability", prompt: "What are the most critical web application vulnerabilities in 2025 and how do I defend against them?" },
+  { icon: FileCode, label: "Audit my code", prompt: "Review this code for security issues:\n\n```js\napp.get('/user', (req, res) => {\n  const id = req.query.id;\n  db.query(`SELECT * FROM users WHERE id = ${id}`);\n});\n```" },
+  { icon: Lock, label: "Harden a server", prompt: "Give me a comprehensive Linux server hardening checklist for a production web server." },
+  { icon: Zap, label: "Incident response", prompt: "We detected unauthorized access to our database. Walk me through an incident response plan." },
+];
 
 const Index = () => {
-  const [image, setImage] = useState<string | null>(null);
-  const [analysis, setAnalysis] = useState("");
+  const [messages, setMessages] = useState<Msg[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const analyzeImage = useCallback(async (base64: string) => {
-    setImage(base64);
-    setAnalysis("");
+  useEffect(() => {
+    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
+  }, [messages]);
+
+  const send = useCallback(async (input: string) => {
+    const userMsg: Msg = { role: "user", content: input };
+    const updatedMessages = [...messages, userMsg];
+    setMessages(updatedMessages);
     setIsLoading(true);
 
-    try {
-      const resp = await fetch(ANALYZE_URL, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-        },
-        body: JSON.stringify({ imageBase64: base64 }),
-      });
-
-      if (!resp.ok || !resp.body) {
-        const err = await resp.json().catch(() => ({ error: "Analysis failed" }));
-        throw new Error(err.error || "Analysis failed");
-      }
-
-      const reader = resp.body.getReader();
-      const decoder = new TextDecoder();
-      let buffer = "";
-      let fullText = "";
-
-      while (true) {
-        const { done, value } = await reader.read();
-        if (done) break;
-        buffer += decoder.decode(value, { stream: true });
-
-        let newlineIndex: number;
-        while ((newlineIndex = buffer.indexOf("\n")) !== -1) {
-          let line = buffer.slice(0, newlineIndex);
-          buffer = buffer.slice(newlineIndex + 1);
-          if (line.endsWith("\r")) line = line.slice(0, -1);
-          if (!line.startsWith("data: ")) continue;
-          const jsonStr = line.slice(6).trim();
-          if (jsonStr === "[DONE]") break;
-          try {
-            const parsed = JSON.parse(jsonStr);
-            const content = parsed.choices?.[0]?.delta?.content;
-            if (content) {
-              fullText += content;
-              setAnalysis(fullText);
-            }
-          } catch {
-            buffer = line + "\n" + buffer;
-            break;
-          }
+    let assistantSoFar = "";
+    const upsertAssistant = (chunk: string) => {
+      assistantSoFar += chunk;
+      const text = assistantSoFar;
+      setMessages(prev => {
+        const last = prev[prev.length - 1];
+        if (last?.role === "assistant") {
+          return prev.map((m, i) => (i === prev.length - 1 ? { ...m, content: text } : m));
         }
-      }
+        return [...prev, { role: "assistant", content: text }];
+      });
+    };
+
+    try {
+      await streamChat({
+        messages: updatedMessages,
+        onDelta: upsertAssistant,
+        onDone: () => setIsLoading(false),
+      });
     } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Analysis failed");
-    } finally {
+      toast.error(e instanceof Error ? e.message : "Request failed");
       setIsLoading(false);
     }
-  }, []);
-
-  const reset = () => {
-    setImage(null);
-    setAnalysis("");
-  };
+  }, [messages]);
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-3xl px-6 py-16">
-        {/* Header */}
-        <div className="mb-12 text-center">
-          <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
-            <Eye className="h-6 w-6 text-primary" />
-          </div>
-          <h1 className="text-3xl font-bold tracking-tight text-foreground">
-            Image Analyzer
+    <div className="flex h-screen flex-col bg-background">
+      {/* Header */}
+      <header className="flex items-center gap-3 border-b border-border px-6 py-4">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 border border-primary/20">
+          <Shield className="h-5 w-5 text-primary" />
+        </div>
+        <div>
+          <h1 className="text-lg font-semibold tracking-tight text-foreground font-sans">
+            SENTINEL
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground">
-            Upload an image and get instant AI-powered analysis
+          <p className="text-xs text-muted-foreground font-mono">
+            Cybersecurity AI Agent
           </p>
         </div>
+        <div className="ml-auto flex items-center gap-1.5">
+          <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+          <span className="text-xs text-muted-foreground font-mono">Online</span>
+        </div>
+      </header>
 
-        {/* Content */}
-        <div className="space-y-6">
-          {!image ? (
-            <ImageDropzone onImageSelect={analyzeImage} disabled={isLoading} />
-          ) : (
-            <div className="space-y-6">
-              {/* Image preview */}
-              <div className="relative overflow-hidden rounded-2xl border border-border bg-card">
-                <button
-                  onClick={reset}
-                  className="absolute right-3 top-3 z-10 rounded-lg bg-background/80 p-1.5 backdrop-blur-sm transition-colors hover:bg-background"
-                >
-                  <X className="h-4 w-4 text-muted-foreground" />
-                </button>
-                <img
-                  src={image}
-                  alt="Uploaded"
-                  className="w-full max-h-[400px] object-contain"
-                />
-              </div>
-
-              {/* Analysis */}
-              <AnalysisResult content={analysis} isLoading={isLoading} />
+      {/* Chat area */}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
+        {messages.length === 0 ? (
+          <div className="flex h-full flex-col items-center justify-center">
+            <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary/10 border border-primary/20">
+              <Shield className="h-8 w-8 text-primary" />
             </div>
-          )}
+            <h2 className="mb-2 text-xl font-semibold text-foreground">
+              How can I secure your systems?
+            </h2>
+            <p className="mb-8 max-w-md text-center text-sm text-muted-foreground">
+              I can analyze vulnerabilities, audit code, guide incident response, and recommend security hardening strategies.
+            </p>
+            <div className="grid w-full max-w-lg grid-cols-2 gap-3">
+              {SUGGESTIONS.map((s) => (
+                <button
+                  key={s.label}
+                  onClick={() => send(s.prompt)}
+                  disabled={isLoading}
+                  className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all hover:border-primary/30 hover:bg-primary/5 disabled:opacity-50"
+                >
+                  <s.icon className="h-4 w-4 shrink-0 text-primary" />
+                  <span className="text-sm text-foreground">{s.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="mx-auto max-w-3xl space-y-4">
+            {messages.map((m, i) => (
+              <ChatMessage key={i} role={m.role} content={m.content} />
+            ))}
+            {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+              <ChatMessage role="assistant" content="" />
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Input */}
+      <div className="border-t border-border px-6 py-4">
+        <div className="mx-auto max-w-3xl">
+          <ChatInput onSend={send} disabled={isLoading} />
+          <p className="mt-2 text-center text-xs text-muted-foreground font-mono">
+            SENTINEL provides guidance only. Always verify recommendations with your security team.
+          </p>
         </div>
       </div>
     </div>
