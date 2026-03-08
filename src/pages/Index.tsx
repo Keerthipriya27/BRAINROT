@@ -80,11 +80,11 @@ const Index = () => {
             <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
               <Bot className="h-8 w-8 text-primary" />
             </div>
-            <h2 className="mb-2 text-xl font-semibold text-foreground">
-              What can I help you with?
+            <h2 className="mb-2 text-xl font-bold text-foreground">
+              yo, what's on your mind? 🤯
             </h2>
             <p className="mb-8 max-w-md text-center text-sm text-muted-foreground">
-              Ask me anything — I can help with writing, research, brainstorming, explanations, and more.
+              ask me literally anything — i'm here to vibe, help, and maybe blow your mind.
             </p>
             <div className="grid w-full max-w-lg grid-cols-2 gap-3">
               {SUGGESTIONS.map((s) => (
