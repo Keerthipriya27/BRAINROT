@@ -5,7 +5,7 @@
 Built with **React + AI streaming**, this project focuses on creating a smooth chat experience with a playful internet-style personality.
 
 ## 🚀 Live Demo
-https://sigmamind.lovable.app/
+
 
 # 🚀 Features
 
