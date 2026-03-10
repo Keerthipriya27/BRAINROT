@@ -1,4 +1,4 @@
-# 🧠💀 BRAINROT — AI Chat Interface using Gemini API
+# 🧠💀 BRAINROT — AI Chatbot using Gemini API
 
 ![BRAINROT Screenshot](./public/brainrot.png)
 
