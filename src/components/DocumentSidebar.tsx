@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { FileText, Loader2, Trash2, Upload, LogOut, CheckCircle2, AlertCircle } from "lucide-react";
+import { FileText, Loader2, Trash2, Upload, LogOut, CheckCircle2, AlertCircle, Stars } from "lucide-react";
 import { toast } from "sonner";
 
 interface Doc {
@@ -69,7 +69,6 @@ export function DocumentSidebar() {
       if (insErr) throw insErr;
 
       toast.success("Uploaded — indexing…");
-      // Fire-and-forget ingest
       supabase.functions.invoke("ingest-document", {
         body: { documentId: doc.id },
       }).then(({ error }) => {
@@ -90,39 +89,49 @@ export function DocumentSidebar() {
   };
 
   return (
-    <aside className="flex w-72 shrink-0 flex-col border-r border-border bg-card/30">
-      <div className="border-b border-border p-4">
-        <h2 className="mb-3 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
-          Your Documents
-        </h2>
+    <aside className="glass m-3 mr-0 flex w-72 shrink-0 flex-col rounded-3xl">
+      <div className="border-b border-white/5 p-4">
+        <div className="mb-4 flex items-center gap-2">
+          <div className="flex h-9 w-9 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-lg shadow-primary/30">
+            <Stars className="h-4 w-4 text-primary-foreground" />
+          </div>
+          <div>
+            <h1 className="text-base font-bold tracking-tight text-gradient">PrabhasBot</h1>
+            <p className="text-[10px] uppercase tracking-widest text-muted-foreground">RAG · v1</p>
+          </div>
+        </div>
         <button
           onClick={() => fileInput.current?.click()}
           disabled={uploading}
-          className="flex w-full items-center justify-center gap-2 rounded-xl border border-dashed border-border bg-background px-3 py-2 text-sm text-foreground transition hover:border-primary/50 hover:bg-primary/5 disabled:opacity-50"
+          className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-primary to-accent px-3 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/20 transition hover:opacity-90 disabled:opacity-50"
         >
           {uploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          {uploading ? "Uploading…" : "Upload PDF or TXT"}
+          {uploading ? "Uploading…" : "Upload document"}
         </button>
         <input ref={fileInput} type="file" accept=".pdf,.txt,.md,application/pdf,text/plain"
           onChange={handleUpload} className="hidden" />
+        <p className="mt-2 text-center text-[10px] text-muted-foreground">PDF · TXT · MD · max 20MB</p>
       </div>
 
       <div className="flex-1 overflow-y-auto p-3">
+        <h2 className="mb-2 px-2 text-[10px] font-semibold uppercase tracking-widest text-muted-foreground">
+          Knowledge base
+        </h2>
         {docs.length === 0 ? (
           <p className="px-2 py-8 text-center text-xs text-muted-foreground">
             No documents yet. Upload a file to start chatting with it.
           </p>
         ) : (
-          <ul className="space-y-1">
+          <ul className="space-y-1.5">
             {docs.map((d) => (
               <li key={d.id}
-                className="group flex items-start gap-2 rounded-lg border border-transparent p-2 hover:border-border hover:bg-background">
-                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
+                className="group flex items-start gap-2 rounded-xl p-2 transition hover:bg-white/5">
+                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-accent" />
                 <div className="min-w-0 flex-1">
                   <p className="truncate text-xs font-medium text-foreground">{d.filename}</p>
                   <div className="mt-0.5 flex items-center gap-1 text-[10px] text-muted-foreground">
                     {d.status === "ready" && (
-                      <><CheckCircle2 className="h-3 w-3 text-emerald-500" />{d.chunk_count} chunks</>
+                      <><CheckCircle2 className="h-3 w-3 text-emerald-400" />{d.chunk_count} chunks</>
                     )}
                     {(d.status === "pending" || d.status === "processing") && (
                       <><Loader2 className="h-3 w-3 animate-spin" />Indexing…</>
@@ -142,10 +151,10 @@ export function DocumentSidebar() {
         )}
       </div>
 
-      <div className="border-t border-border p-3">
+      <div className="border-t border-white/5 p-3">
         <div className="mb-2 truncate px-1 text-xs text-muted-foreground">{user?.email}</div>
         <button onClick={signOut}
-          className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition hover:bg-background hover:text-foreground">
+          className="flex w-full items-center gap-2 rounded-lg px-2 py-1.5 text-xs text-muted-foreground transition hover:bg-white/5 hover:text-foreground">
           <LogOut className="h-3.5 w-3.5" /> Sign out
         </button>
       </div>
