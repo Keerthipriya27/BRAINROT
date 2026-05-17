@@ -1,15 +1,16 @@
 import { useState, useRef, useEffect, useCallback } from "react";
 import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
+import { DocumentSidebar } from "@/components/DocumentSidebar";
 import { streamChat, type ChatMessage as Msg } from "@/lib/streamChat";
-import { Bot, Lightbulb, PenLine, HelpCircle, Sparkles } from "lucide-react";
+import { Bot, FileSearch, ListChecks, HelpCircle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 const SUGGESTIONS = [
-  { icon: Lightbulb, label: "Brainstorm ideas", prompt: "Help me brainstorm creative ideas for a weekend project." },
-  { icon: PenLine, label: "Help me write", prompt: "Help me write a professional email to follow up on a job interview." },
-  { icon: HelpCircle, label: "Explain a concept", prompt: "Explain how the internet works in simple terms." },
-  { icon: Sparkles, label: "Get creative", prompt: "Write a short, fun poem about coffee on a rainy morning." },
+  { icon: FileSearch, label: "Summarize my docs", prompt: "Summarize the key points across my uploaded documents." },
+  { icon: ListChecks, label: "Extract action items", prompt: "List any action items or decisions from my documents." },
+  { icon: HelpCircle, label: "Ask a question", prompt: "What is the main topic of my documents?" },
+  { icon: Sparkles, label: "Compare ideas", prompt: "Compare the main ideas across my documents." },
 ];
 
 const Index = () => {
