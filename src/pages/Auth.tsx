@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Bot, Loader2 } from "lucide-react";
+import { Stars, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 export default function Auth() {
@@ -40,40 +40,41 @@ export default function Auth() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-md rounded-2xl border border-border bg-card p-8">
+    <div className="flex min-h-screen items-center justify-center px-4">
+      <div className="glass-strong w-full max-w-md rounded-3xl p-8 shadow-2xl shadow-primary/10">
         <div className="mb-6 flex flex-col items-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
-            <Bot className="h-6 w-6 text-primary" />
+          <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-primary to-accent shadow-xl shadow-primary/40">
+            <Stars className="h-6 w-6 text-primary-foreground" />
           </div>
-          <h1 className="text-xl font-bold text-foreground">
-            {mode === "signin" ? "Welcome back" : "Create account"}
+          <h1 className="text-2xl font-bold text-gradient">
+            {mode === "signin" ? "Welcome back" : "Join PrabhasBot"}
           </h1>
-          <p className="text-sm text-muted-foreground">
-            {mode === "signin" ? "Sign in to chat with your documents" : "Sign up to start chatting with your documents"}
+          <p className="mt-1 text-sm text-muted-foreground">
+            {mode === "signin" ? "Sign in to chat with your documents" : "Create an account to get started"}
           </p>
         </div>
 
         <form onSubmit={submit} className="space-y-3">
           <input
             type="email" required value={email} onChange={(e) => setEmail(e.target.value)}
-            placeholder="you@example.com"
-            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+            placeholder="you@example.com" autoComplete="email"
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <input
             type="password" required minLength={6} value={password}
             onChange={(e) => setPassword(e.target.value)} placeholder="Password (min 6 chars)"
-            className="w-full rounded-xl border border-border bg-background px-3 py-2 text-sm text-foreground focus:border-primary focus:outline-none"
+            autoComplete={mode === "signin" ? "current-password" : "new-password"}
+            className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"
           />
           <button type="submit" disabled={busy}
-            className="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition hover:bg-primary/90 disabled:opacity-50">
+            className="flex w-full items-center justify-center gap-2 rounded-2xl bg-gradient-to-br from-primary to-accent px-4 py-2.5 text-sm font-medium text-primary-foreground shadow-lg shadow-primary/30 transition hover:opacity-90 disabled:opacity-50">
             {busy && <Loader2 className="h-4 w-4 animate-spin" />}
             {mode === "signin" ? "Sign in" : "Sign up"}
           </button>
         </form>
 
         <button onClick={() => setMode(mode === "signin" ? "signup" : "signin")}
-          className="mt-4 w-full text-center text-xs text-muted-foreground hover:text-foreground">
+          className="mt-5 w-full text-center text-xs text-muted-foreground transition hover:text-foreground">
           {mode === "signin" ? "No account? Sign up" : "Have an account? Sign in"}
         </button>
       </div>

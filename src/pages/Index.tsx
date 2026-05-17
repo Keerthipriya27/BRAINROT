@@ -3,7 +3,7 @@ import { ChatMessage } from "@/components/ChatMessage";
 import { ChatInput } from "@/components/ChatInput";
 import { DocumentSidebar } from "@/components/DocumentSidebar";
 import { streamChat, type ChatMessage as Msg } from "@/lib/streamChat";
-import { Bot, FileSearch, ListChecks, HelpCircle, Sparkles } from "lucide-react";
+import { Stars, FileSearch, ListChecks, HelpCircle, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 
 const SUGGESTIONS = [
@@ -54,74 +54,72 @@ const Index = () => {
   }, [messages]);
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex h-screen">
       <DocumentSidebar />
-      <div className="flex flex-1 flex-col">
-        {/* Header */}
-        <header className="flex items-center gap-3 border-b border-border px-6 py-4">
-          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
-            <Bot className="h-5 w-5 text-primary" />
-          </div>
-          <div>
-            <h1 className="text-lg font-bold tracking-widest uppercase text-foreground font-mono">
-              BRAINROT
-            </h1>
-            <p className="text-xs text-muted-foreground">
-              chat with your documents · RAG-powered
-            </p>
-          </div>
-          <div className="ml-auto flex items-center gap-1.5">
-            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-            <span className="text-xs text-muted-foreground">Online</span>
-          </div>
-        </header>
 
-        {/* Chat area */}
-        <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-6">
-          {messages.length === 0 ? (
-            <div className="flex h-full flex-col items-center justify-center">
-              <div className="mb-6 flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 border border-primary/20">
-                <Bot className="h-8 w-8 text-primary" />
+      <div className="flex flex-1 flex-col p-3 pl-3">
+        <div className="glass-strong flex flex-1 flex-col overflow-hidden rounded-3xl">
+          {/* Header */}
+          <header className="flex items-center gap-3 border-b border-white/5 px-6 py-4">
+            <div>
+              <h1 className="text-lg font-bold text-gradient">PrabhasBot</h1>
+              <p className="text-xs text-muted-foreground">Retrieval-augmented · grounded in your documents</p>
+            </div>
+            <div className="ml-auto flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+              <span className="text-[10px] uppercase tracking-wider text-emerald-300">Online</span>
+            </div>
+          </header>
+
+          {/* Chat area */}
+          <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-8">
+            {messages.length === 0 ? (
+              <div className="flex h-full flex-col items-center justify-center">
+                <div className="mb-6 flex h-20 w-20 items-center justify-center rounded-3xl bg-gradient-to-br from-primary to-accent shadow-2xl shadow-primary/40">
+                  <Stars className="h-9 w-9 text-primary-foreground" />
+                </div>
+                <h2 className="mb-2 text-2xl font-bold text-gradient">
+                  Hey, I'm PrabhasBot
+                </h2>
+                <p className="mb-10 max-w-md text-center text-sm text-muted-foreground">
+                  Upload a document on the left, then ask me anything about it. I'll retrieve the most relevant passages and cite them in my answer.
+                </p>
+                <div className="grid w-full max-w-xl grid-cols-2 gap-3">
+                  {SUGGESTIONS.map((s) => (
+                    <button
+                      key={s.label}
+                      onClick={() => send(s.prompt)}
+                      disabled={isLoading}
+                      className="glass group flex items-center gap-3 rounded-2xl p-4 text-left transition-all hover:bg-white/10 hover:shadow-lg hover:shadow-primary/10 disabled:opacity-50"
+                    >
+                      <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 text-accent transition group-hover:from-primary/30 group-hover:to-accent/30">
+                        <s.icon className="h-4 w-4" />
+                      </div>
+                      <span className="text-sm font-medium text-foreground">{s.label}</span>
+                    </button>
+                  ))}
+                </div>
               </div>
-              <h2 className="mb-2 text-xl font-bold text-foreground">
-                Ask anything about your documents
-              </h2>
-              <p className="mb-8 max-w-md text-center text-sm text-muted-foreground">
-                Upload PDFs or text files from the sidebar, then ask questions. I'll retrieve the relevant passages and cite them.
-              </p>
-              <div className="grid w-full max-w-lg grid-cols-2 gap-3">
-                {SUGGESTIONS.map((s) => (
-                  <button
-                    key={s.label}
-                    onClick={() => send(s.prompt)}
-                    disabled={isLoading}
-                    className="flex items-center gap-3 rounded-xl border border-border bg-card p-4 text-left transition-all hover:border-primary/30 hover:bg-primary/5 disabled:opacity-50"
-                  >
-                    <s.icon className="h-4 w-4 shrink-0 text-primary" />
-                    <span className="text-sm text-foreground">{s.label}</span>
-                  </button>
+            ) : (
+              <div className="mx-auto max-w-3xl space-y-6">
+                {messages.map((m, i) => (
+                  <ChatMessage key={i} role={m.role} content={m.content} />
                 ))}
+                {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+                  <ChatMessage role="assistant" content="" />
+                )}
               </div>
-            </div>
-          ) : (
-            <div className="mx-auto max-w-3xl space-y-4">
-              {messages.map((m, i) => (
-                <ChatMessage key={i} role={m.role} content={m.content} />
-              ))}
-              {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
-                <ChatMessage role="assistant" content="" />
-              )}
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        {/* Input */}
-        <div className="border-t border-border px-6 py-4">
-          <div className="mx-auto max-w-3xl">
-            <ChatInput onSend={send} disabled={isLoading} />
-            <p className="mt-2 text-center text-xs text-muted-foreground">
-              Answers are grounded in your uploaded documents when relevant.
-            </p>
+          {/* Input */}
+          <div className="px-6 pb-5 pt-2">
+            <div className="mx-auto max-w-3xl">
+              <ChatInput onSend={send} disabled={isLoading} />
+              <p className="mt-2 text-center text-[10px] text-muted-foreground">
+                PrabhasBot grounds answers in your uploaded documents when relevant.
+              </p>
+            </div>
           </div>
         </div>
       </div>
