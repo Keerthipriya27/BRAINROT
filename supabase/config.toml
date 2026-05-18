@@ -1,10 +1,4 @@
 project_id = "xeojfqulesuerxtmzsil"
 
-[functions.analyze-image]
-verify_jwt = false
-
-[functions.chat]
-verify_jwt = false
-
-[functions.ingest-document]
+[functions.predict-image]
 verify_jwt = false
