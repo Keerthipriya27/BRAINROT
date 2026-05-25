@@ -1,4 +1,4 @@
 project_id = "xeojfqulesuerxtmzsil"
 
-[functions.predict-image]
+[functions.event-copilot]
 verify_jwt = false
