@@ -14,6 +14,27 @@ export type Database = {
   }
   public: {
     Tables: {
+      badges: {
+        Row: {
+          awarded_at: string
+          id: string
+          name: string
+          user_id: string
+        }
+        Insert: {
+          awarded_at?: string
+          id?: string
+          name: string
+          user_id: string
+        }
+        Update: {
+          awarded_at?: string
+          id?: string
+          name?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       document_chunks: {
         Row: {
           chunk_index: number
@@ -94,11 +115,276 @@ export type Database = {
         }
         Relationships: []
       }
+      events: {
+        Row: {
+          budget: number | null
+          capacity: number | null
+          category: string | null
+          cover_url: string | null
+          created_at: string
+          description: string | null
+          end_at: string | null
+          id: string
+          intelligence_score: number | null
+          location: string | null
+          organizer_id: string
+          start_at: string | null
+          status: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          budget?: number | null
+          capacity?: number | null
+          category?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_at?: string | null
+          id?: string
+          intelligence_score?: number | null
+          location?: string | null
+          organizer_id: string
+          start_at?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          budget?: number | null
+          capacity?: number | null
+          category?: string | null
+          cover_url?: string | null
+          created_at?: string
+          description?: string | null
+          end_at?: string | null
+          id?: string
+          intelligence_score?: number | null
+          location?: string | null
+          organizer_id?: string
+          start_at?: string | null
+          status?: Database["public"]["Enums"]["event_status"]
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          college: string | null
+          created_at: string
+          display_name: string | null
+          id: string
+          interests: string[] | null
+          skills: string[] | null
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          college?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          interests?: string[] | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          college?: string | null
+          created_at?: string
+          display_name?: string | null
+          id?: string
+          interests?: string[] | null
+          skills?: string[] | null
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      registrations: {
+        Row: {
+          created_at: string
+          event_id: string
+          id: string
+          participant_id: string
+          qr_code: string
+        }
+        Insert: {
+          created_at?: string
+          event_id: string
+          id?: string
+          participant_id: string
+          qr_code?: string
+        }
+        Update: {
+          created_at?: string
+          event_id?: string
+          id?: string
+          participant_id?: string
+          qr_code?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "registrations_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      sponsorships: {
+        Row: {
+          amount: number | null
+          created_at: string
+          event_id: string
+          id: string
+          industry: string | null
+          package_name: string | null
+          roi_score: number | null
+          sponsor_id: string
+          status: Database["public"]["Enums"]["sponsorship_status"]
+        }
+        Insert: {
+          amount?: number | null
+          created_at?: string
+          event_id: string
+          id?: string
+          industry?: string | null
+          package_name?: string | null
+          roi_score?: number | null
+          sponsor_id: string
+          status?: Database["public"]["Enums"]["sponsorship_status"]
+        }
+        Update: {
+          amount?: number | null
+          created_at?: string
+          event_id?: string
+          id?: string
+          industry?: string | null
+          package_name?: string | null
+          roi_score?: number | null
+          sponsor_id?: string
+          status?: Database["public"]["Enums"]["sponsorship_status"]
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sponsorships_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_roles: {
+        Row: {
+          created_at: string
+          id: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          role?: Database["public"]["Enums"]["app_role"]
+          user_id?: string
+        }
+        Relationships: []
+      }
+      volunteer_tasks: {
+        Row: {
+          assignee_id: string | null
+          created_at: string
+          description: string | null
+          event_id: string
+          id: string
+          skill_required: string | null
+          status: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at: string
+          xp_reward: number
+        }
+        Insert: {
+          assignee_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_id: string
+          id?: string
+          skill_required?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Update: {
+          assignee_id?: string | null
+          created_at?: string
+          description?: string | null
+          event_id?: string
+          id?: string
+          skill_required?: string | null
+          status?: Database["public"]["Enums"]["task_status"]
+          title?: string
+          updated_at?: string
+          xp_reward?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "volunteer_tasks_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      volunteer_xp: {
+        Row: {
+          level: number
+          updated_at: string
+          user_id: string
+          xp: number
+        }
+        Insert: {
+          level?: number
+          updated_at?: string
+          user_id: string
+          xp?: number
+        }
+        Update: {
+          level?: number
+          updated_at?: string
+          user_id?: string
+          xp?: number
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
+      has_role: {
+        Args: {
+          _role: Database["public"]["Enums"]["app_role"]
+          _user_id: string
+        }
+        Returns: boolean
+      }
       match_document_chunks: {
         Args: { match_count?: number; query_embedding: string }
         Returns: {
@@ -111,7 +397,10 @@ export type Database = {
       }
     }
     Enums: {
-      [_ in never]: never
+      app_role: "organizer" | "volunteer" | "sponsor" | "participant"
+      event_status: "draft" | "published" | "live" | "completed" | "cancelled"
+      sponsorship_status: "proposed" | "accepted" | "rejected" | "completed"
+      task_status: "open" | "claimed" | "in_progress" | "done"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -238,6 +527,11 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {},
+    Enums: {
+      app_role: ["organizer", "volunteer", "sponsor", "participant"],
+      event_status: ["draft", "published", "live", "completed", "cancelled"],
+      sponsorship_status: ["proposed", "accepted", "rejected", "completed"],
+      task_status: ["open", "claimed", "in_progress", "done"],
+    },
   },
 } as const
